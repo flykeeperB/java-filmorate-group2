@@ -1,3 +1,4 @@
+
 package ru.yandex.practicum.filmorate.config;
 
 import org.springframework.context.annotation.Bean;
@@ -8,7 +9,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import javax.sql.DataSource;
 
 
-//@Configuration
+
 public class AppConfig {
     public static final String JDBC_URL = "jdbc:h2:file:./db/filmorate";
     public static final String JDBC_USERNAME = "sa";
@@ -31,3 +32,4 @@ public class AppConfig {
         return new JdbcTemplate(dataSource());
     }
 }
+
