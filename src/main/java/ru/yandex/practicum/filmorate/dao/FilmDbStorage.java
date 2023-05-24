@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import static ru.yandex.practicum.filmorate.dao.UserDbStorage.FIND_USER_BY_ID_IN_TABLE_SQL;
@@ -31,6 +32,7 @@ public class FilmDbStorage implements FilmStorage {
                 + "LEFT JOIN LIST_OF_GENRES AS l ON g.GENRE_ID = l.GENRE_ID "
                 + "LEFT JOIN LIST_OF_MPAS AS m on f.MPA_ID = m.MPA_ID ";
     private final JdbcTemplate jdbcTemplate;
+
 
     @Autowired
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
@@ -53,6 +55,7 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sqlQuery, idFilm);
     }
 
+
     private void addDirectors(long idDirector, long idFilm) {
         try {
             String sqlQuery = "INSERT INTO DIRECTORS (DIRECTOR_ID, FILM_ID) VALUES (?,?)";
@@ -72,9 +75,24 @@ public class FilmDbStorage implements FilmStorage {
     private List<Genre> getListGenresForFilm(long idFilm) {
         List<Genre> genres = jdbcTemplate.query("SELECT GENRE_ID FROM GENRES WHERE FILM_ID=" + idFilm, new GenreExtractor());
 
+
         return genres;
     }
 
+    List<Genre> getListGenresForFilmId(long idFilm) {
+        String sqlQuery = "select GENRES.GENRE_ID,  LIST_OF_GENRES.GENRE_NAME " +
+                "from GENRES " +
+                "INNER JOIN LIST_OF_GENRES ON LIST_OF_GENRES.GENRE_ID = GENRES.GENRE_ID " +
+                "where GENRES.FILM_ID = " + idFilm + " " +
+                "ORDER BY GENRES.GENRE_ID";
+
+        List<Genre> list = new ArrayList<>();
+        List<Map<String, Object>> listNew = jdbcTemplate.queryForList(sqlQuery);
+        listNew.forEach(rowMap -> list
+                .add(new Genre((int) rowMap.get("GENRE_ID"),(String) rowMap.get("GENRE_NAME"))));
+
+        return list;
+    }
     @Override
     public Film addFilm(Film film) {
         SimpleJdbcInsert insertIntoFilm = new SimpleJdbcInsert(jdbcTemplate)
