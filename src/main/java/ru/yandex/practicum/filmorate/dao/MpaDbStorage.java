@@ -46,4 +46,12 @@ public class MpaDbStorage implements MpaStorage {
         }
         return mpa;
     }
+
+    public Mpa getFilmMpaById(int idMpa) {
+
+        String sqlQuery = "select MPA_NAME " +
+                "from LIST_OF_MPAS where MPA_ID = ?";
+        String mpa = jdbcTemplate.queryForObject(sqlQuery, String.class, idMpa);
+        return new Mpa(idMpa, mpa);
+    }
 }

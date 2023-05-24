@@ -10,6 +10,14 @@ public class Genre {
     long id;
     String name;
 
+    public Genre() {
+        }
+
+    public Genre(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

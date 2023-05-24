@@ -11,8 +11,10 @@ import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
+import java.time.LocalDate;
 import java.util.*;
 
 //класс DAO - объект доступа к данным. Необходимо написать
@@ -23,6 +25,9 @@ import java.util.*;
 @Repository
 public class FilmDbStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
+
+
+
     @Autowired
     private FilmExtractor filmExtractor;
 
@@ -47,13 +52,27 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sqlQuery, idFilm);
     }
 
-    private List<Genre> getListGenresForFilm(long idFilm) {
+    List<Genre> getListGenresForFilm(long idFilm) {
         List<Genre> genres = jdbcTemplate.query(
                 "SELECT GENRE_ID FROM GENRES WHERE FILM_ID=" + idFilm, new GenreExtractor());
 
         return genres;
     }
 
+    List<Genre> getListGenresForFilmId(long idFilm) {
+        String sqlQuery = "select GENRES.GENRE_ID,  LIST_OF_GENRES.GENRE_NAME " +
+                "from GENRES " +
+                "INNER JOIN LIST_OF_GENRES ON LIST_OF_GENRES.GENRE_ID = GENRES.GENRE_ID " +
+                "where GENRES.FILM_ID = " + idFilm + " " +
+                "ORDER BY GENRES.GENRE_ID";
+
+        List<Genre> list = new ArrayList<>();
+        List<Map<String, Object>> listNew = jdbcTemplate.queryForList(sqlQuery);
+        listNew.forEach(rowMap -> list
+                .add(new Genre((int) rowMap.get("GENRE_ID"),(String) rowMap.get("GENRE_NAME"))));
+
+        return list;
+    }
     @Override
     public Film addFilm(Film film) {
         SimpleJdbcInsert insertIntoFilm = new SimpleJdbcInsert(jdbcTemplate)
