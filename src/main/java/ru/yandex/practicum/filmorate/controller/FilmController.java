@@ -8,7 +8,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -92,6 +92,12 @@ public class FilmController {
             @PathVariable("id") Long filmId,
             @PathVariable("userId") Long userId) {
         filmService.deleteLike(filmId, userId);
+    }
+
+    @GetMapping("/films/search")
+    public List<Film> searchFilm(@RequestParam String query,
+                                 @RequestParam String by) {
+        return filmService.searchFilm(query, by);
     }
 
 }
