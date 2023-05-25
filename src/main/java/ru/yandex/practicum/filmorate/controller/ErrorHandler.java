@@ -51,4 +51,16 @@ public class ErrorHandler {
     public ErrorResponse handleMpaNotFoundException(final MpaNotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleDirectorNotFoundException(final DirectorNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleDirectorNotFoundException(final NotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
 }
