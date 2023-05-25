@@ -63,5 +63,4 @@ public class ErrorHandler {
     public ErrorResponse handleDirectorNotFoundException(final NotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
-
 }
